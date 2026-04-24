@@ -8,41 +8,55 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        HashMap <Integer, Inventory> products = new HashMap<Integer, Inventory>();
+
+        //created hashmap for the products
+        HashMap <String, Inventory> products = new HashMap<String, Inventory>();
+
+        //creating the buffreader to add products from the source file
         try{
-        BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/inventory.csv"));
-        String line;
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/inventory.csv"));
+            String line;
 
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split("\\|");
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\|");
 
-            int id = Integer.parseInt(parts[0]);
-            String name = parts[1];
-            Float price = Float.parseFloat(parts[2]);
+                int id = Integer.parseInt(parts[0]);
+                String name = parts[1];
+                Float price = Float.parseFloat(parts[2]);
 
-            Inventory product = new Inventory(id, name, price);
-            products.put(id, product);
-        }
-        reader.close();
+                Inventory product = new Inventory(id, name, price);
+                products.put(name, product);
+            }
+            reader.close();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
+        }
+        //display all products in the inventory
+        System.out.println("ID \tProduct Name \t \t\t Price");
+        for(Inventory key : products.values()) {
+
+            System.out.printf("%d %s \t %.2f \n",key.getId(),key.getName(),key.getPrice());
+
         }
 
         boolean searchAgain = true;
 
+        //a while loop to search product repeatedly
         while (searchAgain) {
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("What product would you like to search? (Enter X to quit.)");
-            int userInput = Integer.parseInt(scanner.nextLine());
+            String userInput = scanner.nextLine();
 
-            switch (userInput) {
-                case('X'):
-                    searchAgain = false;
-                    break;
-                default:
-                    Inventory print = products.get(userInput);
-                    System.out.println(print.toString());
+            //prints out the product or exits
+            if (userInput.equalsIgnoreCase("x")) {
+                System.out.println("you have exited the program.");
+                searchAgain = false;
+            }
+            else {
+                Inventory print = products.get(userInput);
+                System.out.printf("%d %s %.2f \n",print.getId(),print.getName(),print.getPrice());
+
             }
         }
     }
